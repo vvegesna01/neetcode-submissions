@@ -1,0 +1,45 @@
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        if t == "":
+            return ""
+        
+        countT, window = {}, {}
+        for c in t:
+            countT[c] = 1 + countT.get(c, 0)
+        
+        res, resLen = [-1, -1], float('inf')
+        have, need = 0, len(countT)
+
+        l = 0
+        for r in range(len(s)):
+            c = s[r]
+            window[c] = 1 + window.get(c, 0)
+
+            # if any condition is satisfied
+            if c in countT and window[c] == countT[c]:
+                have += 1
+            
+            while have == need:
+                # update potential min result
+                curr_window_size = (r - l + 1)
+                if curr_window_size < resLen:
+                    res = [l, r]
+                    resLen = curr_window_size
+                
+                # keep shrinking from left while have == need
+                window[s[l]] -= 1
+                
+                if s[l] in countT and window[s[l]] < countT[s[l]]:
+                    have -= 1
+                
+                l += 1
+            
+        l, r = res
+        if resLen != float('inf'):
+            return s[l:r+1]
+        return ""
+
+
+
+
+
